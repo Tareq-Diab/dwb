@@ -26,90 +26,52 @@ z=0.5
 pwm_mr.ChangeDutyCycle(speed)
 pwm_ml.ChangeDutyCycle(speed)
 
-pygame.init()
-screen = pygame.display.set_mode((240, 240))
-pygame.display.set_caption('Pygame Keyboard Test')
-pygame.mouse.set_visible(1)
+rospy.init_node("key_listenser_node")
 
 
-
-def key_listener():
-    global message , speed
-    pub=rospy.Publisher("cmd_vel",Twist,queue_size=10)
-    rospy.init_node("key_listenser_node")
-
-    while not rospy.is_shutdown():
-        events = pygame.event.get()
-        twist=Twist()
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-
-                if event.key ==  pygame.K_RIGHT:
-                    twist.angular.z=z
-                    message='left'
-                    print(message)
-                    pub.publish(twist)
-                    gpio.output(mr[1],1)
-                    gpio.output(ml[1],1)                  
-                if event.key == pygame.K_LEFT :
-                    twist.angular.z=-z
-                    message='right'
-                    print(message)
-                    pub.publish(twist)
-                    gpio.output(mr[0],1)
-                    gpio.output(ml[0],1)      
-                if event.key == pygame.K_UP:
-                    twist.linear.x=v
-                    x=v
-                    message='up'
-                    print(message)
-                    pub.publish(twist)
-                    gpio.output(mr[0],1)
-                    gpio.output(ml[1],1) 
-
-                                        
-                if event.key == pygame.K_DOWN:
-                    twist.linear.x=-v
-                    message='DOWN'
-                    print(message)
-                    pub.publish(twist)
-                    gpio.output(mr[1],1)
-                    gpio.output(ml[0],1) 
-                if event.key == pygame.K_q:
-                    pygame.display.quit()
-                    pygame.quit()
-                if event.key == pygame.K_w:
-                    speed=5+speed
-                    pwm_mr.ChangeDutyCycle(speed)
-                    pwm_ml.ChangeDutyCycle(speed)
-                    print(speed)
-                if event.key == pygame.K_s:
-                    speed=speed-5
-                    pwm_mr.ChangeDutyCycle(speed)
-                    pwm_ml.ChangeDutyCycle(speed)
-                    print(speed)
-            if event.type == pygame.KEYUP:
-                twist.angular.z=0.0
-                twist.linear.x=0.0
-                message='key-up'
-                print(message)
-                pub.publish(twist)
-                gpio.output(ml[0],0)
-                gpio.output(mr[0],0)
-                gpio.output(ml[1],0)
-                gpio.output(mr[1],0)
-if __name__=="__main__":
-    key_listener()
-"""
-for i in range(4):
-    gpio.output(ml[0],1)
-    pwm_mr.ChangeDutyCycle(25*i)
-    pwm_ml.ChangeDutyCycle(25*i)
-    time.sleep(3)
-
-gpio.output(ml[0],0)
-pwm_mr.ChangeDutyCycle(0)
-pwm_ml.ChangeDutyCycle(0)
-
-    
- """   
+class motors:
+    def __init__(self):
+        self.error_l_d=0
+        self.error_r_d=0
+        self.left_speed=0
+        self.kp=2
+        self.kd=2
+        self.ki=0
+    def set_rpm(self,l,r):
+        if l>0:
+            gpio.output(ml[1],1)
+            gpio.output(ml[0],0)
+        else :
+            gpio.output(ml[1],0)
+            gpio.output(ml[0],1)
+        if r>0:
+            gpio.output(mr[1],1)
+            gpio.output(mr[0],0)
+        else :
+            gpio.output(mr[1],0)
+            gpio.output(mr[0],1)
+        error_l =l-self.left_speed
+        error_l_d=error_l-self.error_l_tprev
+        pwm_l=self.kp*error_l+self.kd*self.error_l_d 
+        pwm_l =pwm_l if pwm_l<100 else 100
+        pwm_ml.ChangeDutyCycle(pwm_l)
+        error_l_tprev=error_l
+        
+        error_r =r-self.lright_speed
+        error_r_d=error_r-self.error_r_tprev
+        pwm_r=self.kp*error_r+self.kd*self.error_r_d 
+        pwm_r =pwm_r if pwm_r<100 else 100
+        pwm_mr.ChangeDutyCycle(pwm_r)
+        error_r_tprev=error_r   
+        
+wheel_span=0.275
+wheel_circumference=0.082*3.14
+def twis_CB(msg):
+    v=msg.linear.x
+    w=msg.angular.z
+    v_r = ((2 * v) + (w * wheel_span)) / (2 )
+    v_l = ((2 * v) - (w * wheel_span)) / (2 )
+    w_r=int((v_r/wheel_circumference)*60)
+    w_l=int((v_l/wheel_circumference)*60)
+    motors.set_rpm(w_l,-w_r)
+rospy.rospy.Subscriber("cmd_vel", Twist, twis_CB)
