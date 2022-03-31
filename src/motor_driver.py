@@ -7,7 +7,7 @@ from pygame.locals import *
 import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist 
-
+from frequncy_calculator import motorspeed
 gpio.setmode(gpio.BOARD)
 mr=[37,35,40]
 ml=[33,31,38]
@@ -28,12 +28,12 @@ pwm_ml.ChangeDutyCycle(speed)
 
 rospy.init_node("key_listenser_node")
 
-
 class motors:
     def __init__(self):
         self.error_l_d=0
         self.error_r_d=0
-        self.left_speed=0
+        self.left_speed=motorspeed(16,231)
+        self.right_speed=motorspeed(16,231)
         self.kp=2
         self.kd=2
         self.ki=0
@@ -50,14 +50,14 @@ class motors:
         else :
             gpio.output(mr[1],0)
             gpio.output(mr[0],1)
-        error_l =l-self.left_speed
+        error_l =l-self.left_speed.RPM()
         error_l_d=error_l-self.error_l_tprev
         pwm_l=self.kp*error_l+self.kd*self.error_l_d 
         pwm_l =pwm_l if pwm_l<100 else 100
         pwm_ml.ChangeDutyCycle(pwm_l)
         error_l_tprev=error_l
         
-        error_r =r-self.lright_speed
+        error_r =r-self.right_speed.RPM()
         error_r_d=error_r-self.error_r_tprev
         pwm_r=self.kp*error_r+self.kd*self.error_r_d 
         pwm_r =pwm_r if pwm_r<100 else 100
