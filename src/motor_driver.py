@@ -127,4 +127,4 @@ def odom_thread_fun():
             odom.twist.twist.angular.z=dtheta
             odom_publisher.publish(odom)
 odom_thread=Thread(target=odom_thread_fun)
-odom_thread.strart
+odom_thread.start()
