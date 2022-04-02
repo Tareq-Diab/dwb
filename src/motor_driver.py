@@ -95,6 +95,7 @@ rospy.Subscriber("cmd_vel", Twist, twis_CB)
 odom_publisher=rospy.Publisher("odom",Odometry)
 speed_rate=rospy.Rate(50)
 def odom_thread_fun():
+    global theta ,x,y,odom
     while True:
             speed_rate.sleep()
             # //calculating robot speed
