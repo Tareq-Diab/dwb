@@ -123,4 +123,4 @@ while True:
     odom.twist.twist.linear.x=dx
     odom.twist.twist.linear.y=dy
     odom.twist.twist.angular.z=dtheta
-    odom_publisher.publish()
+    odom_publisher.publish(odom)
