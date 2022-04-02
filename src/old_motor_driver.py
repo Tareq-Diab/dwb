@@ -57,7 +57,7 @@ class motors:
         pwm_l=self.kp*error_l+self.kd*self.error_l_d
         print(pwm_l)
         pwm_l =abs(pwm_l) if abs(pwm_l)<100 else 100
-        pwm_ml.ChangeDutyCycle(10)
+        pwm_ml.ChangeDutyCycle(abs(pwm_l))
         self.error_l_tprev=error_l
         
         
@@ -65,7 +65,7 @@ class motors:
         error_r_d=error_r-self.error_r_tprev
         pwm_r=self.kp*error_r+self.kd*self.error_r_d 
         pwm_r =abs(pwm_r) if abs(pwm_r)<100 else 100
-        pwm_mr.ChangeDutyCycle(10)
+        pwm_mr.ChangeDutyCycle(abs(pwm_r))
         self.error_r_tprev=error_r   
         
 wheel_span=0.275

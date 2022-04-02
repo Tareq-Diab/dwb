@@ -76,7 +76,13 @@ class motors:
         pwm_r =abs(pwm_r) if abs(pwm_r)<100 else 100
         pwm_mr.ChangeDutyCycle(abs(pwm_r))
         self.error_r_tprev=error_r   
-        
+        if l==0 and r==0:
+            gpio.output(mr[0],0)
+            gpio.output(ml[0],0)
+            gpio.output(mr[1],0)
+            gpio.output(ml[1],0)
+            pwm_mr.ChangeDutyCycle(0)
+            pwm_ml.ChangeDutyCycle(0)
 wheel_span=0.275
 wheel_circumference=0.082*3.14
 theta=0
