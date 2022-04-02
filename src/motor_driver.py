@@ -10,8 +10,8 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from frequncy_calculator import motorspeed
 import tf
-import sys
-sys.system("echo 'hakunamatata' | sudo -S pigpiod ")
+import os
+os.system("echo 'hakunamatata' | sudo -S pigpiod ")
 
 odom=Odometry()
 odom.header.frame_id="odom"
