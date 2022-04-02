@@ -62,20 +62,21 @@ class motors:
             gpio.output(mr[1],0)
             gpio.output(mr[0],1)
         error_l =l-self.left_speed.RPM()
-        error_l_d=error_l-self.error_l_tprev
+        
+        self.error_l_d=error_l-self.error_l_tprev
         pwm_l=self.kp*error_l+self.kd*self.error_l_d
-        print(pwm_l)
-        pwm_l =abs(pwm_l) if abs(pwm_l)<100 else 100
-        pwm_ml.ChangeDutyCycle(abs(pwm_l))
+        pwm_l =min(abs(pwm_l),100)
+        pwm_ml.ChangeDutyCycle(pwm_l)
         self.error_l_tprev=error_l
         
         
         error_r =r-self.right_speed.RPM()
-        error_r_d=error_r-self.error_r_tprev
+        self.error_r_d=error_r-self.error_r_tprev
         pwm_r=self.kp*error_r+self.kd*self.error_r_d 
-        pwm_r =abs(pwm_r) if abs(pwm_r)<100 else 100
-        pwm_mr.ChangeDutyCycle(abs(pwm_r))
+        pwm_r =min(abs(pwm_r),100)
+        pwm_mr.ChangeDutyCycle(pwm_r)
         self.error_r_tprev=error_r   
+        
         if l==0 and r==0:
             gpio.output(mr[0],0)
             gpio.output(ml[0],0)
