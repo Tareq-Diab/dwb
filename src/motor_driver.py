@@ -116,10 +116,10 @@ while True:
     odom.pose.pose.position.x=x
     odom.pose.pose.position.y=y
     odom.pose.pose.position.z=0
-    odom.pose.pose.orientation.x=quaternion.x
-    odom.pose.pose.orientation.y=quaternion.y
-    odom.pose.pose.orientation.z=quaternion.z
-    odom.pose.pose.orientation.w=quaternion.w
+    odom.pose.pose.orientation.x=quaternion[0]
+    odom.pose.pose.orientation.y=quaternion[1]
+    odom.pose.pose.orientation.z=quaternion[2]
+    odom.pose.pose.orientation.w=quaternion[3]
     odom.twist.twist.linear.x=dx
     odom.twist.twist.linear.y=dy
     odom.twist.twist.angular.z=dtheta
