@@ -10,6 +10,9 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from frequncy_calculator import motorspeed
 import tf
+import sys
+sys.system("echo 'hakunamatata' | sudo -S pigpiod ")
+
 odom=Odometry()
 odom.header.frame_id="odom"
 odom.child_frame_id="chassis"
@@ -109,7 +112,7 @@ while True:
     # //dy is calculated separatly for the twist message
     dy=robot_speed*math.sin(theta)
     y=y+dy
-    quaternion=tf.createQuaternionFromYaw(theta)
+    quaternion=tf.transformations.quaternion_from_euler(0,0,theta)
     odom.pose.pose.position.x=x
     odom.pose.pose.position.y=y
     odom.pose.pose.position.z=0
