@@ -92,40 +92,42 @@ def twis_CB(msg):
     w_l=int((v_l/wheel_circumference)*60)
     motors.set_rpm(w_l,-w_r)
 rospy.Subscriber("cmd_vel", Twist, twis_CB)
-odom_publisher=rospy.Publisher("odom",Odometry)
-speed_rate=rospy.Rate(50)
-def odom_thread_fun():
-    global theta ,x,y,odom
-    while True:
-            speed_rate.sleep()
-            # //calculating robot speed
-            right_speed=motors.right_speed.RPM()*wheel_circumference*(1/60)
-            left_speed=motors.left_speed.RPM()*wheel_circumference*(1/60)
-            robot_speed=(right_speed+left_speed)/2
-            # //calculating change in robot oriantation "YAW"
-            dtheta=(right_speed-left_speed)/wheel_span
-            # //updating robot orientation "YAW"
-            theta=theta+dtheta
+# odom_publisher=rospy.Publisher("odom",Odometry)
+# speed_rate=rospy.Rate(50)
+# def odom_thread_fun():
+#     global theta ,x,y,odom
+#     while True:
+#             speed_rate.sleep()
+#             # //calculating robot speed
+#             right_speed=motors.right_speed.RPM()*wheel_circumference*(1/60)
+#             left_speed=motors.left_speed.RPM()*wheel_circumference*(1/60)
+#             robot_speed=(right_speed+left_speed)/2
+#             # //calculating change in robot oriantation "YAW"
+#             dtheta=(right_speed-left_speed)/wheel_span
+#             # //updating robot orientation "YAW"
+#             theta=theta+dtheta
 
-            # //robot new position in X
-            # //dx is calculated separatly for the twist message
-            dx=robot_speed*math.cos(theta)
-            x=x+dx
-            # //robot new position in y
-            # //dy is calculated separatly for the twist message
-            dy=robot_speed*math.sin(theta)
-            y=y+dy
-            quaternion=tf.transformations.quaternion_from_euler(0,0,theta)
-            odom.pose.pose.position.x=x
-            odom.pose.pose.position.y=y
-            odom.pose.pose.position.z=0
-            odom.pose.pose.orientation.x=quaternion[0]
-            odom.pose.pose.orientation.y=quaternion[1]
-            odom.pose.pose.orientation.z=quaternion[2]
-            odom.pose.pose.orientation.w=quaternion[3]
-            odom.twist.twist.linear.x=dx
-            odom.twist.twist.linear.y=dy
-            odom.twist.twist.angular.z=dtheta
-            odom_publisher.publish(odom)
-odom_thread=Thread(target=odom_thread_fun)
-odom_thread.start()
+#             # //robot new position in X
+#             # //dx is calculated separatly for the twist message
+#             dx=robot_speed*math.cos(theta)
+#             x=x+dx
+#             # //robot new position in y
+#             # //dy is calculated separatly for the twist message
+#             dy=robot_speed*math.sin(theta)
+#             y=y+dy
+#             quaternion=tf.transformations.quaternion_from_euler(0,0,theta)
+#             odom.pose.pose.position.x=x
+#             odom.pose.pose.position.y=y
+#             odom.pose.pose.position.z=0
+#             odom.pose.pose.orientation.x=quaternion[0]
+#             odom.pose.pose.orientation.y=quaternion[1]
+#             odom.pose.pose.orientation.z=quaternion[2]
+#             odom.pose.pose.orientation.w=quaternion[3]
+#             odom.twist.twist.linear.x=dx
+#             odom.twist.twist.linear.y=dy
+#             odom.twist.twist.angular.z=dtheta
+#             odom_publisher.publish(odom)
+# odom_thread=Thread(target=odom_thread_fun)
+# odom_thread.start()
+while True :
+    rospy.spin()
