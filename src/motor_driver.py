@@ -71,6 +71,7 @@ class motors:
         
         
         error_r =r-self.right_speed.RPM()
+        print("rpm is {} and error is {} ".format(r,error_r))
         self.error_r_d=error_r-self.error_r_tprev
         pwm_r=self.kp*error_r+self.kd*self.error_r_d 
         pwm_r =min(abs(pwm_r),100)
